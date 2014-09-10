@@ -1,0 +1,109 @@
+<html>
+<head>
+<title></title>
+<style>
+body { background:#f0f0f0; }
+canvas { margin:30px auto; display:block; border:1px solid #aaa; height:auto; max-width:100%; }
+.pieChart { position:relative; float:left; margin-left:20px;  }
+.pieChart .value { position:absolute; top: 50%; left: 0; width: 100%; text-align: center; margin-top: -.5em; }
+.hidden { display:none; }
+</style>
+<script type="text/javascript" src="pie.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+<body>
+
+<canvas id="myCanvasSimple" width="200" height="200"></canvas>
+<hr />
+<div class="pieChart">
+	<canvas id="myCanvas1" data-percent="0" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<div class="pieChart">
+	<canvas id="myCanvas2" data-percent="1" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<div class="pieChart">
+	<canvas id="myCanvas3"  data-percent="23" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<div class="pieChart">
+	<canvas id="myCanvas4"  data-percent="100" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<div class="pieChart">
+	<canvas id="myCanvas4"  data-percent="30.5" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<div class="pieChart">
+	<canvas id="myCanvas4"  data-percent="130.45" width="200" height="200"></canvas>
+	<div class="value"></div>
+</div>
+
+<img id="patternGreen" src="pattern_green_mirror.png" class="hidden"/>
+
+<script>
+// requestAnimationFrame Shim
+
+var myCanvasSimple = document.getElementById('myCanvasSimple').getContext('2d');
+
+var img=document.getElementById("patternGreen");
+img.onload = function() {
+	var settings = {
+		centerX : 100,
+		centerY : 100,
+		size    : 100,
+		width   : 26,
+		borderWidth : 6,
+		innerBorderWidth : 6,
+		fill : myCanvasSimple.createPattern(img,"repeat"),
+		strokeStyle : "#2b8e00",
+		radialOffset : 0.007 * Math.PI,
+		context : myCanvasSimple,
+		duration : 1200
+	};
+	new TmPieChart(settings).drawAnimated(75);
+	
+	
+	/** each with jquery ****/
+	
+	jQuery('.pieChart canvas').each(function() {
+		var ctx = this.getContext('2d');
+		var obj = jQuery(this);
+		//console.log(obj);
+		var settings = {
+			centerX : 100,
+			centerY : 100,
+			size    : 100,
+			width   : 26,
+			borderWidth : 6,
+			innerBorderWidth : 6,
+			fill : myCanvasSimple.createPattern(img,"repeat"),
+			strokeStyle : "#2b8e00",
+			radialOffset : 0.007 * Math.PI,
+			context : ctx,
+			duration : 1200,
+			easeEffect : function(t) {
+				//own ease-function
+				t = t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t;
+				if(t<0) t = 1;
+				return t;
+			},
+			drawCB : function(percentage) {
+				console.log(percentage);
+				jQuery(this).next().html(Math.round(percentage)+'<small>%</small>');
+			}.bind(this)//bind the current this-object (the selected canvas) to the function
+		};
+		new TmPieChart(settings).drawAnimated(jQuery(this).data('percent'));
+	});
+}
+
+</script>
+
+</body>
+</html>
