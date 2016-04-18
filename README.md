@@ -1,3 +1,3 @@
 # animatedDoughnutDiagram
 
-Just practice a little the use of canvas.
+Just practice the use of canvas a little.
